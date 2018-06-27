@@ -11,9 +11,9 @@ Auto generated Sphinx documentation you can  find [here](http://iqoptionapi.read
 
 ### Installation
 ```
-pip install iqoptionapi
+pip install --upgrade git+https://github.com/n1nj4z33/iqoptionapi.git@master
 ```
-
+The above is referenced from: [Stackoverflow](https://stackoverflow.com/a/51041835/4948889)
 ### A small example
 
     from iqoptionapi.api import IQOptionAPI
