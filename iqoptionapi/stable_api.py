@@ -85,7 +85,7 @@ class IQ_Option:
                 pass
             #break
         time.sleep(self.suspend*2)
-        self.connect_count = self.connect_count+1
+        #self.connect_count = self.connect_count+1
     # else:
         # logging.error(
             # '**error** reconnect() too many time please look log file')
