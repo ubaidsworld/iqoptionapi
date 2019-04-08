@@ -35,6 +35,7 @@ class IQ_Option:
         self.max_reconnect = 5
         self.connect_count = 0
         # --start
+        self.api = IQOptionAPI("iqoption.com", self.email, self.password)
         self.connect()
         # self.update_ACTIVES_OPCODE() this auto function delay too long
         self.get_balance_id()
@@ -47,47 +48,48 @@ class IQ_Option:
         self.max_reconnect = number
 
     def connect(self):
-        while True:
+        # while True:
+            # try:
+                # self.api.close()
+            # except:
+                # pass
+                #logging.error('**warning** self.api.close() fail')
+        # if self.connect_count < self.max_reconnect:
+            # self.api = IQOptionAPI(
+                # "iqoption.com", self.email, self.password)
+        check = None
+        try:
+            check = self.api.connect()
+            if(check==False): check = self.api.connect()
+        except:
+            logging.error('**error** connect() fail')
+        if check == True:
+            # -------------reconnect subscribe_candle
             try:
-                self.api.close()
+                for ac in self.subscribe_candle:
+                    sp = ac.split(",")
+                    self.start_candles_one_stream(sp[0], sp[1])
             except:
                 pass
-                #logging.error('**warning** self.api.close() fail')
-            if self.connect_count < self.max_reconnect:
-                self.api = IQOptionAPI(
-                    "iqoption.com", self.email, self.password)
-                check = None
-                try:
-                    check = self.api.connect()
-                except:
-                    logging.error('**error** connect() fail')
-                if check == True:
-                    # -------------reconnect subscribe_candle
-                    try:
-                        for ac in self.subscribe_candle:
-                            sp = ac.split(",")
-                            self.start_candles_one_stream(sp[0], sp[1])
-                    except:
-                        pass
-                    # -----------------
-                    try:
-                        for ac in self.subscribe_candle_all_size:
-                            self.start_candles_all_size_stream(ac)
-                    except:
-                        pass
-                    # -------------reconnect subscribe_mood
-                    try:
-                        for ac in self.subscribe_mood:
-                            self.start_mood_stream(ac)
-                    except:
-                        pass
-                    break
-                time.sleep(self.suspend*2)
-                self.connect_count = self.connect_count+1
-            else:
-                logging.error(
-                    '**error** reconnect() too many time please look log file')
-                exit(1)
+            # -----------------
+            try:
+                for ac in self.subscribe_candle_all_size:
+                    self.start_candles_all_size_stream(ac)
+            except:
+                pass
+            # -------------reconnect subscribe_mood
+            try:
+                for ac in self.subscribe_mood:
+                    self.start_mood_stream(ac)
+            except:
+                pass
+            #break
+        time.sleep(self.suspend*2)
+        self.connect_count = self.connect_count+1
+    # else:
+        # logging.error(
+            # '**error** reconnect() too many time please look log file')
+        #exit(1)
 
     def check_connect(self):
         # True/False
